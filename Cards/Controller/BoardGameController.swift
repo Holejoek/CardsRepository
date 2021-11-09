@@ -12,8 +12,8 @@ class BoardGameController: UIViewController {
     // сущность "Игра"
     lazy var game: Game = getNewGame()
     private var flippedCards = [UIView]()
-    
-    private func getNewGame() -> Game {
+    var isFromContinueButton = false
+    func getNewGame() -> Game {
         let game = Game()
         game.generateCards()
         return game
@@ -22,10 +22,10 @@ class BoardGameController: UIViewController {
     //MARK: viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(boardGameView)
         view.addSubview(startButtonView)
         view.addSubview(flipAllCardsButtonView)
         view.addSubview(goBackButton)
-        view.addSubview(boardGameView)
         view.addSubview(setupButtonView)
         view.addSubview(currentScoreLabel)
         navigationController?.isNavigationBarHidden = true
@@ -153,7 +153,7 @@ class BoardGameController: UIViewController {
         return boardView
     }
     //MARK: генерация карточек
-    private func getCardBy(modelData: [Card]) -> [UIView] {
+     func getCardBy(modelData: [Card]) -> [UIView] {
         var cardViews = [UIView]()
         let cardViewFactory = CardViewFactory()
         for (index, modelCard) in modelData.enumerated() {
@@ -226,7 +226,7 @@ class BoardGameController: UIViewController {
     //MARK: Размещение карточек на игровом поле
     var cardViews = [UIView]()
     
-    private func placeCardsOnBoard(_ cards: [UIView]) {
+    func placeCardsOnBoard(_ cards: [UIView]) {
         // удаляем все имеющиеся на игровом поле карточки
         for card in cardViews {
             card.removeFromSuperview()
@@ -241,7 +241,27 @@ class BoardGameController: UIViewController {
             boardGameView.addSubview(card)
         }
     }
+    func placeCardsOnBoardWithCGPoint(cards array: [UIView], with cgPoint: [CGPoint]) {
+        for i in 0...array.count {
+            array[i].frame.origin = cgPoint[i]
+            boardGameView.addSubview(array[i])
+        }
+    }
     
+        override func viewDidDisappear(_ animated: Bool) {
+            let progressStorage = ProgressStorage()
+            var progressToSave = [CardProgress]()
+            for oneCard in boardGameView.subviews {
+               let xCoordinateToSave = Int(oneCard.frame.origin.x)
+               let yCoordinateToSave = Int(oneCard.frame.origin.y)
+                let cardShapeToSave =  game.cards[oneCard.tag].type
+               let cardColorToSave = game.cards[oneCard.tag].color
+                let stepsCount = String(game.stepsCount)
+                progressToSave.append((xCoordinateToSave, yCoordinateToSave, cardShapeToSave,cardColorToSave, BackCardType.circle, stepsCount ))
+            }
+            progressStorage.save(progressToSave)
+        }
+        
 
     private var cardSize: CGSize {
         CGSize(width: 80, height: 120)
