@@ -7,7 +7,7 @@
 
 import Foundation
 
-typealias CardProgress = (xCoordinate: Int, yCoordinate: Int, cardShape: CardType, cardColor: CardColor, cardBack: BackCardType, step: String)
+typealias CardProgress = (xCoordinate: Int, yCoordinate: Int, cardShape: CardType, cardColor: CardColor, cardBack: BackCardType)
 
 protocol ProgressStorageProtocol {
     func load() -> [CardProgress]?
@@ -25,7 +25,7 @@ class ProgressStorage: ProgressStorageProtocol {
         case cardShape
         case cardColor
         case cardBack
-        case step
+       
     }
      func isExistProgress() -> Bool {
         return UserDefaults.standard.object(forKey: "storageKey") != nil
@@ -54,10 +54,9 @@ class ProgressStorage: ProgressStorageProtocol {
                           return true
                       }
                       return false
-                  }),
-                  let stepFromStorage = oneDictioanry[ProgressStorageKey.step.rawValue]
+                  })
             else { return nil }
-            cardProgress.append((xCoordinate: xCoordinateFromStorage, yCoordinate: yCoordinateFromStorage, cardShape: cardShapeFromStorage, cardColor: cardColorFromStorage, cardBack: cardBackFromStorage, step: stepFromStorage))
+            cardProgress.append((xCoordinate: xCoordinateFromStorage, yCoordinate: yCoordinateFromStorage, cardShape: cardShapeFromStorage, cardColor: cardColorFromStorage, cardBack: cardBackFromStorage))
         }
         return cardProgress
     }
@@ -71,7 +70,7 @@ class ProgressStorage: ProgressStorageProtocol {
             oneCardProgress[ProgressStorageKey.cardShape.rawValue] = oneValue.cardShape.rawValue
             oneCardProgress[ProgressStorageKey.cardColor.rawValue] = oneValue.cardColor.rawValue
             oneCardProgress[ProgressStorageKey.cardShape.rawValue] = oneValue.cardBack.rawValue
-            oneCardProgress[ProgressStorageKey.step.rawValue] = String(oneValue.step)
+            
             newElementOfStorage.append(oneCardProgress)
         }
         storage.set(newElementOfStorage, forKey: storageKey)

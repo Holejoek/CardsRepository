@@ -80,7 +80,7 @@ class StartScreen: UIViewController {
         boardGameVc.game = boardGameVc.getNewGame()
         let cards = boardGameVc.getCardBy(modelData: loadedCards)
         boardGameVc.placeCardsOnBoardWithCGPoint(cards: cards, with: loadedCGPointOfCards)
-        boardGameVc.currentScoreLabel.text = loadedProgress.first?.step
+        boardGameVc.currentScoreLabel.text = String(boardGameVc.game.stepsCount)
         navigationController?.pushViewController(boardGameVc, animated: true )
     }
 }

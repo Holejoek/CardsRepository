@@ -256,8 +256,8 @@ class BoardGameController: UIViewController {
                let yCoordinateToSave = Int(oneCard.frame.origin.y)
                 let cardShapeToSave =  game.cards[oneCard.tag].type
                let cardColorToSave = game.cards[oneCard.tag].color
-                let stepsCount = String(game.stepsCount)
-                progressToSave.append((xCoordinateToSave, yCoordinateToSave, cardShapeToSave,cardColorToSave, BackCardType.circle, stepsCount ))
+                
+                progressToSave.append((xCoordinateToSave, yCoordinateToSave, cardShapeToSave,cardColorToSave, BackCardType.circle ))
             }
             progressStorage.save(progressToSave)
         }
