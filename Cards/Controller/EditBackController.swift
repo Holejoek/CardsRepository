@@ -28,7 +28,7 @@ class EditBackController: UITableViewController {
     }
     @objc func back(_ sender: UIBarButtonItem) {
         guard selectedBacks.count > 0 else {
-            let alert = UIAlertController(title: "Внимание", message: "Выберете хотя бы одну рубашку", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Внимание", message: "Выберите хотя бы одну рубашку", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
             self.present(alert, animated: true, completion: nil)
             return }

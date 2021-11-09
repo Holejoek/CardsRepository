@@ -24,6 +24,7 @@
 		3555F04727346A38004B5C26 /* EditBackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3555F04627346A37004B5C26 /* EditBackController.swift */; };
 		3555F04B273474B0004B5C26 /* BackCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3555F049273474B0004B5C26 /* BackCell.swift */; };
 		3555F04C273474B0004B5C26 /* BackCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3555F04A273474B0004B5C26 /* BackCell.xib */; };
+		3567C42D273AA8DE00D6CD75 /* ProgressStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3567C42C273AA8DE00D6CD75 /* ProgressStorage.swift */; };
 		35AC5A322731C45C00BB6FA6 /* EditColorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC5A312731C45C00BB6FA6 /* EditColorController.swift */; };
 		35B1F55627300BE8008CB0F5 /* EditShapeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B1F55527300BE8008CB0F5 /* EditShapeController.swift */; };
 		35B1F55827302E91008CB0F5 /* UserDefaultsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B1F55727302E91008CB0F5 /* UserDefaultsStorage.swift */; };
@@ -50,6 +51,7 @@
 		3555F04627346A37004B5C26 /* EditBackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBackController.swift; sourceTree = "<group>"; };
 		3555F049273474B0004B5C26 /* BackCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackCell.swift; sourceTree = "<group>"; };
 		3555F04A273474B0004B5C26 /* BackCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BackCell.xib; sourceTree = "<group>"; };
+		3567C42C273AA8DE00D6CD75 /* ProgressStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressStorage.swift; sourceTree = "<group>"; };
 		35AC5A312731C45C00BB6FA6 /* EditColorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditColorController.swift; sourceTree = "<group>"; };
 		35B1F55527300BE8008CB0F5 /* EditShapeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditShapeController.swift; sourceTree = "<group>"; };
 		35B1F55727302E91008CB0F5 /* UserDefaultsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorage.swift; sourceTree = "<group>"; };
@@ -73,10 +75,7 @@
 				0437A7E4272546BD000935DD /* Storyboards */,
 				0437A7E027254199000935DD /* Shapes.swift */,
 				0437A7E2272541AA000935DD /* Cards.swift */,
-				3555F04227345DEF004B5C26 /* ShapeCell.swift */,
-				3555F04327345DEF004B5C26 /* ShapeCell.xib */,
-				3555F049273474B0004B5C26 /* BackCell.swift */,
-				3555F04A273474B0004B5C26 /* BackCell.xib */,
+				3567C42B273AA0BF00D6CD75 /* Cells */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -109,6 +108,7 @@
 				0437A7E927254974000935DD /* Card.swift */,
 				0437A7EB27254B6F000935DD /* Game.swift */,
 				35B1F55727302E91008CB0F5 /* UserDefaultsStorage.swift */,
+				3567C42C273AA8DE00D6CD75 /* ProgressStorage.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -150,6 +150,17 @@
 				04CFB386272736AB00A91652 /* CardViewFactory.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		3567C42B273AA0BF00D6CD75 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				3555F04A273474B0004B5C26 /* BackCell.xib */,
+				3555F04227345DEF004B5C26 /* ShapeCell.swift */,
+				3555F04327345DEF004B5C26 /* ShapeCell.xib */,
+				3555F049273474B0004B5C26 /* BackCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -236,6 +247,7 @@
 				0494B8D72721D0B100CABFC6 /* AppDelegate.swift in Sources */,
 				0494B8D92721D0B100CABFC6 /* SceneDelegate.swift in Sources */,
 				04202D37272AE484003FEA0A /* StartScreen.swift in Sources */,
+				3567C42D273AA8DE00D6CD75 /* ProgressStorage.swift in Sources */,
 				3555F04B273474B0004B5C26 /* BackCell.swift in Sources */,
 				04CFB387272736AB00A91652 /* CardViewFactory.swift in Sources */,
 				3555F04427345DEF004B5C26 /* ShapeCell.swift in Sources */,

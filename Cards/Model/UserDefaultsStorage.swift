@@ -15,11 +15,11 @@ protocol CardDefaultsProtocol {
 }
 
 class UserDefaultsStorage: CardDefaultsProtocol {
-  private let storageKey: String = "cards"
-   private let standart: CardsDefaults = (CardType.allCases , CardColor.allCases, BackCardType.allCases, 8)
+    private let storageKey: String = "cards"
+    private let standart: CardsDefaults = (CardType.allCases , CardColor.allCases, BackCardType.allCases, 8)
     
-    private var storage = UserDefaults.standard
-
+    private let storage = UserDefaults.standard
+    
     func load() -> CardsDefaults {
         var loadedProp: CardsDefaults
         var loadedTypes: [CardType] = []
@@ -29,7 +29,7 @@ class UserDefaultsStorage: CardDefaultsProtocol {
             guard let typesFromStorage = object[DefaultsKeys.frontTypes.rawValue],
                   let colorsFromStorage = object[DefaultsKeys.colors.rawValue],
                   let backTypesFromStorage = object[DefaultsKeys.backTypes.rawValue],
-                    let pairsCount = object[DefaultsKeys.pairsCount.rawValue] else {
+                  let pairsCount = object[DefaultsKeys.pairsCount.rawValue] else {
                       return standart
                   }
             for type in typesFromStorage {

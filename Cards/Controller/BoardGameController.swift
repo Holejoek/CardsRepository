@@ -9,8 +9,7 @@ import UIKit
 
 class BoardGameController: UIViewController {
    
-    
-    //сущность "Игра"
+    // сущность "Игра"
     lazy var game: Game = getNewGame()
     private var flippedCards = [UIView]()
     
@@ -19,40 +18,33 @@ class BoardGameController: UIViewController {
         game.generateCards()
         return game
     }
-    //MARK: Размещение карточек на игровом поле
-    var cardViews = [UIView]()
     
-    private func placeCardsOnBoard(_ cards: [UIView]) {
-        // удаляем все имеющиеся на игровом поле карточки
-        for card in cardViews {
-            card.removeFromSuperview()
-        }
-        cardViews = cards
-        // перебираем карточки
-        for card in cardViews {
-            // для каждой карточки генерируем случайные координаты
-            let randomXCoordinate = Int.random(in: 0...cardMaxXCoordinate)
-            let randomYCoordinate = Int.random(in: 0...cardMaxYCoordinate)
-            card.frame.origin = CGPoint(x: randomXCoordinate, y: randomYCoordinate)
-            
-            boardGameView.addSubview(card)
-        }
+    //MARK: viewDidLoad
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.addSubview(startButtonView)
+        view.addSubview(flipAllCardsButtonView)
+        view.addSubview(goBackButton)
+        view.addSubview(boardGameView)
+        view.addSubview(setupButtonView)
+        view.addSubview(currentScoreLabel)
+        navigationController?.isNavigationBarHidden = true
     }
     
-    //MARK: Создание интерфейса сверху
+    //MARK: - Создание интерфейса сверху
+    // Не уверен, что необходимо использовать "lazy"
     lazy var setupButtonView = getSetupButtonView()
     lazy var startButtonView = getStartButtonView()
     lazy var flipAllCardsButtonView = getFlipAllCardsButtonView()
     lazy var goBackButton = getBackButton()
     lazy var currentScoreLabel = getCurrentScoreLabel()
+    
     private func getCurrentScoreLabel() -> UILabel {
         let label = UILabel(frame: CGRect(x: goBackButton.frame.maxX, y: startButtonView.frame.origin.y, width: (view.frame.width - startButtonView.frame.width - 10*2)/4, height: 50))
         
         label.text = "0"
         label.textAlignment = .center
         label.textColor = .systemCyan
-       
-        
         return label
     }
 
@@ -69,6 +61,8 @@ class BoardGameController: UIViewController {
         let setupScreenVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SetupScreen")
         navigationController?.pushViewController(setupScreenVC, animated: true)
     }
+    
+    
     private func getBackButton() -> UIButton {
         let button = UIButton(frame: CGRect(x: startButtonView.frame.minX - ((view.frame.width - startButtonView.frame.width - 10*2)/4)*2, y: startButtonView.frame.origin.y, width: (view.frame.width - startButtonView.frame.width - 10*2)/4, height: 50))
         
@@ -80,6 +74,8 @@ class BoardGameController: UIViewController {
     @objc func goBack(_ sender: UIButton) {
         navigationController?.popViewController(animated: true )
     }
+    
+    
     private func getFlipAllCardsButtonView() -> UIButton {
         let button = UIButton(frame: CGRect(x: startButtonView.frame.maxX, y: startButtonView.frame.origin.y , width: (view.frame.width - startButtonView.frame.width - 10*2)/4, height: 50))
         let flipImage = UIImage(systemName: "rectangle.2.swap")
@@ -115,7 +111,7 @@ class BoardGameController: UIViewController {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width/3 - 10, height: 50))
         button.center.x = view.center.x
         
-        // Ограничение от safe area
+        // Ограничение от safe area (хочется найти новый способо получить safeAreaInsets)
         let window = UIApplication.shared.windows[0]
         let topPadding = window.safeAreaInsets.top
         
@@ -135,7 +131,9 @@ class BoardGameController: UIViewController {
         let cards = getCardBy(modelData: game.cards)
         placeCardsOnBoard(cards)
     }
-    //MARK: Игровое поле
+    
+    
+    //MARK: - Игровое поле
     lazy var boardGameView = getBoardGameView()
     private func getBoardGameView() -> UIView {
         //отступ игрового поля от ближайших элементов
@@ -170,6 +168,7 @@ class BoardGameController: UIViewController {
         // добавляем всем картам обработчик переворотов
         for card in cardViews {
             (card as! FlippableView).flipCompletionHandler = { [self] flippedCard in
+               
                 // переносим карточку вверх иерархии
                 flippedCard.superview?.bringSubviewToFront(flippedCard)
                 //добавляем или удаляем карточку
@@ -223,10 +222,30 @@ class BoardGameController: UIViewController {
         
         return cardViews
     }
+    
+    //MARK: Размещение карточек на игровом поле
+    var cardViews = [UIView]()
+    
+    private func placeCardsOnBoard(_ cards: [UIView]) {
+        // удаляем все имеющиеся на игровом поле карточки
+        for card in cardViews {
+            card.removeFromSuperview()
+        }
+        cardViews = cards
+        // перебираем карточки
+        for card in cardViews {
+            // для каждой карточки генерируем случайные координаты
+            let randomXCoordinate = Int.random(in: 0...cardMaxXCoordinate)
+            let randomYCoordinate = Int.random(in: 0...cardMaxYCoordinate)
+            card.frame.origin = CGPoint(x: randomXCoordinate, y: randomYCoordinate)
+            boardGameView.addSubview(card)
+        }
+    }
+    
+
     private var cardSize: CGSize {
         CGSize(width: 80, height: 120)
     }
-    
     // предельные координаты размещения карточек
     private var cardMaxXCoordinate: Int {
         Int(boardGameView.frame.width - cardSize.width)
@@ -234,17 +253,6 @@ class BoardGameController: UIViewController {
     private var cardMaxYCoordinate: Int {
         Int(boardGameView.frame.height - cardSize.height)
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.addSubview(startButtonView)
-        view.addSubview(flipAllCardsButtonView)
-        view.addSubview(goBackButton)
-        view.addSubview(boardGameView)
-        view.addSubview(setupButtonView)
-        view.addSubview(currentScoreLabel)
-        navigationController?.isNavigationBarHidden = true   
-    }
-    
 }
 
 

@@ -25,7 +25,7 @@ class EditShapeController: UITableViewController {
     }
     @objc func back(_ sender: UIBarButtonItem) {
         guard availableShapes.count > 0 else {
-            let alert = UIAlertController(title: "Внимание", message: "Выберете хотя бы одну фигуру", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Внимание", message: "Выберите хотя бы одну фигуру", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
             self.present(alert, animated: true, completion: nil)
             return }

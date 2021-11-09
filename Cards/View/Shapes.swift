@@ -95,7 +95,7 @@ class CircleUnfillShape: CAShapeLayer, ShapeLayerProtocol {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
+// SquareShape - незакрашенный квадрат (желательно назвать UnfillSquareShape)
 class SquareShape: CAShapeLayer, ShapeLayerProtocol{
     required init(size: CGSize, fillColor: CGColor) {
         super.init()
@@ -152,6 +152,7 @@ class CrossShape: CAShapeLayer, ShapeLayerProtocol {
         fatalError("init(coder:) has not been implemented")
     }
 }
+//  FillShape - переделал из закрашенного View в квадрат, название не поменял (желательно назвать SquareShape)
 class FillShape: CAShapeLayer, ShapeLayerProtocol {
     required init(size: CGSize, fillColor: CGColor) {
         super.init()

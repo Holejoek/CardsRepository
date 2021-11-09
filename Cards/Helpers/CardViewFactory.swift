@@ -8,6 +8,8 @@
 import UIKit
 
 class CardViewFactory {
+        
+    // Добавил функцию для передачи фигур на экран настройки доступных фигур
     func getForEditScreen(_ shape: CardType, withSize size: CGSize, andColor color: CardColor) -> UIView {
         // на основе размеров определяем фрейм
         let frame = CGRect(origin: .zero, size: size)
