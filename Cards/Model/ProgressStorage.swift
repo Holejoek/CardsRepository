@@ -12,21 +12,30 @@ typealias CardProgress = (xCoordinate: Int, yCoordinate: Int, cardShape: CardTyp
 protocol ProgressStorageProtocol {
     func load() -> [CardProgress]?
     func save(_ newValue: [CardProgress])
+    func loadCurrentStep() -> Int
+    func saveCurrentStep(_ newValue: Int)
 }
 
 class ProgressStorage: ProgressStorageProtocol {
     
     let storage = UserDefaults.standard
     private let storageKey = "progress"
-    
+    private let storageForStepsKey = "currentStep"
     private enum ProgressStorageKey: String {
         case xCoordinate
         case yCoordinate
         case cardShape
         case cardColor
-       case tag
-       
+        case tag
     }
+    func loadCurrentStep() -> Int {
+        let intFromStorage = storage.integer(forKey: storageForStepsKey)
+      return intFromStorage
+    }
+    func saveCurrentStep(_ newValue: Int) {
+        storage.set(newValue, forKey: storageForStepsKey)
+    }
+    
      func isExistProgress() -> Bool {
          let check = UserDefaults.standard.object(forKey: storageKey) as! [[String:String]]
          return check.isEmpty
