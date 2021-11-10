@@ -7,7 +7,7 @@
 
 import Foundation
 
-typealias CardProgress = (xCoordinate: Int, yCoordinate: Int, cardShape: CardType, cardColor: CardColor, cardBack: BackCardType)
+typealias CardProgress = (xCoordinate: Int, yCoordinate: Int, cardShape: CardType, cardColor: CardColor, tagOfView: Int)
 
 protocol ProgressStorageProtocol {
     func load() -> [CardProgress]?
@@ -24,11 +24,12 @@ class ProgressStorage: ProgressStorageProtocol {
         case yCoordinate
         case cardShape
         case cardColor
-        case cardBack
+       case tag
        
     }
      func isExistProgress() -> Bool {
-        return UserDefaults.standard.object(forKey: "storageKey") != nil
+         let check = UserDefaults.standard.object(forKey: storageKey) as! [[String:String]]
+         return check.isEmpty
     }
     
     func load() -> [CardProgress]? {
@@ -48,15 +49,11 @@ class ProgressStorage: ProgressStorageProtocol {
                           return true
                       }
                       return false
-                  }) ,
-                  let cardBackFromStorage = BackCardType.allCases.first(where: { card in
-                      if card.rawValue == oneDictioanry[ProgressStorageKey.cardBack.rawValue] {
-                          return true
-                      }
-                      return false
-                  })
+                  }),
+                  let tagOfViewFromStorage = Int(oneDictioanry[ProgressStorageKey.tag.rawValue] ?? "0")
+                 
             else { return nil }
-            cardProgress.append((xCoordinate: xCoordinateFromStorage, yCoordinate: yCoordinateFromStorage, cardShape: cardShapeFromStorage, cardColor: cardColorFromStorage, cardBack: cardBackFromStorage))
+            cardProgress.append((xCoordinate: xCoordinateFromStorage, yCoordinate: yCoordinateFromStorage, cardShape: cardShapeFromStorage, cardColor: cardColorFromStorage, tagOfView: tagOfViewFromStorage ))
         }
         return cardProgress
     }
@@ -69,8 +66,7 @@ class ProgressStorage: ProgressStorageProtocol {
             oneCardProgress[ProgressStorageKey.yCoordinate.rawValue] = String(oneValue.yCoordinate)
             oneCardProgress[ProgressStorageKey.cardShape.rawValue] = oneValue.cardShape.rawValue
             oneCardProgress[ProgressStorageKey.cardColor.rawValue] = oneValue.cardColor.rawValue
-            oneCardProgress[ProgressStorageKey.cardShape.rawValue] = oneValue.cardBack.rawValue
-            
+            oneCardProgress[ProgressStorageKey.tag.rawValue] = String(oneValue.tagOfView)
             newElementOfStorage.append(oneCardProgress)
         }
         storage.set(newElementOfStorage, forKey: storageKey)

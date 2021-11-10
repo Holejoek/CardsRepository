@@ -34,6 +34,13 @@ class Game {
         stepsCount = 0
         
     }
+    func getCardFromProgressStorage(_ source: [CardProgress] ){
+        for i in 1...source.count {
+            let card: Card = (type: source[i - 1].cardShape ,color: source[i - 1].cardColor)
+            self.cards.append(card)
+        }
+        
+    }
     // генерация массива случайных карт
     func generateCards() {
         // генерируем новый массив карточек

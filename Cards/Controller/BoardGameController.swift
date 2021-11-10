@@ -18,6 +18,8 @@ class BoardGameController: UIViewController {
         game.generateCards()
         return game
     }
+    var cardProgress: [CardProgress]?
+    var isContinuation: Bool = false
     
     //MARK: viewDidLoad
     override func viewDidLoad() {
@@ -29,6 +31,23 @@ class BoardGameController: UIViewController {
         view.addSubview(setupButtonView)
         view.addSubview(currentScoreLabel)
         navigationController?.isNavigationBarHidden = true
+        
+        if isContinuation {
+        var loadedCards: [Card] = []
+        var loadedCGPointOfCards: [CGPoint] = []
+            guard let progress = cardProgress else {
+                print("ViewDidLoad isEmpty Progress")
+                return }
+        for oneCard in progress {
+            loadedCards.append((oneCard.cardShape, oneCard.cardColor))
+            loadedCGPointOfCards.append(CGPoint(x: oneCard.xCoordinate, y: oneCard.yCoordinate))
+            
+        }
+        game = Game()
+        game.getCardFromProgressStorage(progress)
+        let cards = getCardByForStartScreen(modelData: loadedCards)
+      placeCardsOnBoardWithCGPoint(cards: cards, with: loadedCGPointOfCards)
+        }
     }
     
     //MARK: - Создание интерфейса сверху
@@ -127,9 +146,13 @@ class BoardGameController: UIViewController {
         return button
     }
     @objc func startGame(_ sender: UIButton) {
+        boardGameView.subviews.forEach { view in
+            view.removeFromSuperview()
+        }
         game = getNewGame()
         let cards = getCardBy(modelData: game.cards)
         placeCardsOnBoard(cards)
+        currentScoreLabel.text = "0"
     }
     
     
@@ -153,9 +176,11 @@ class BoardGameController: UIViewController {
         return boardView
     }
     //MARK: генерация карточек
+    
      func getCardBy(modelData: [Card]) -> [UIView] {
         var cardViews = [UIView]()
         let cardViewFactory = CardViewFactory()
+         
         for (index, modelCard) in modelData.enumerated() {
             let cardOne = cardViewFactory.get(modelCard.type, withSize: cardSize, andColor: modelCard.color)
             cardOne.tag = index
@@ -242,13 +267,15 @@ class BoardGameController: UIViewController {
         }
     }
     func placeCardsOnBoardWithCGPoint(cards array: [UIView], with cgPoint: [CGPoint]) {
-        for i in 0...array.count {
-            array[i].frame.origin = cgPoint[i]
-            boardGameView.addSubview(array[i])
+        for i in 0...(array.count - 1) {
+            let cardForBoard = array[i]
+            cardForBoard.frame.origin = cgPoint[i]
+            boardGameView.addSubview(cardForBoard)
         }
     }
     
         override func viewDidDisappear(_ animated: Bool) {
+            
             let progressStorage = ProgressStorage()
             var progressToSave = [CardProgress]()
             for oneCard in boardGameView.subviews {
@@ -256,8 +283,8 @@ class BoardGameController: UIViewController {
                let yCoordinateToSave = Int(oneCard.frame.origin.y)
                 let cardShapeToSave =  game.cards[oneCard.tag].type
                let cardColorToSave = game.cards[oneCard.tag].color
-                
-                progressToSave.append((xCoordinateToSave, yCoordinateToSave, cardShapeToSave,cardColorToSave, BackCardType.circle ))
+                let cardTagOfViewToSave = oneCard.tag
+                progressToSave.append((xCoordinateToSave, yCoordinateToSave, cardShapeToSave,cardColorToSave,cardTagOfViewToSave ))
             }
             progressStorage.save(progressToSave)
         }
@@ -273,6 +300,80 @@ class BoardGameController: UIViewController {
     private var cardMaxYCoordinate: Int {
         Int(boardGameView.frame.height - cardSize.height)
     }
+    
+    func getCardByForStartScreen(modelData: [Card]) -> [UIView] {
+       var cardViews = [UIView]()
+       let cardViewFactory = CardViewFactory()
+        var i = 0
+       for  modelCard in modelData {
+           
+           let card = cardViewFactory.get(modelCard.type, withSize: cardSize, andColor: modelCard.color)
+           guard let tagOfViewFromProgressStorage = cardProgress?[i].tagOfView else {
+               print("tagOfViewFromProgressStorage - Empty")
+               break
+           }
+           i += 1
+           card.tag = tagOfViewFromProgressStorage
+           cardViews.append(card)
+       }
+       // добавляем всем картам обработчик переворотов
+       for card in cardViews {
+           (card as! FlippableView).flipCompletionHandler = { [self] flippedCard in
+               // переносим карточку вверх иерархии
+               flippedCard.superview?.bringSubviewToFront(flippedCard)
+               //добавляем или удаляем карточку
+               if flippedCard.isFlipped {
+                   self.flippedCards.append(flippedCard)
+                   self.game.stepsCount += 1
+                   self.currentScoreLabel.text = String(self.game.stepsCount)
+               } else {
+                   if let cardIndex = self.flippedCards.firstIndex(of: flippedCard) {
+                       self.flippedCards.remove(at: cardIndex)
+                                       }
+               }
+               // если перевернуто 2 карточки
+               if self.flippedCards.count == 2 {
+                   // получаем карточки из данных модели
+                   let firstCard = game.cards[self.flippedCards.first!.tag]
+                   let secondCard = game.cards[self.flippedCards.last!.tag]
+                   // если карточки одинаковые
+                   if game.checkCards(firstCard, secondCard) {
+                       // сперва анимированно скрываем их
+                       UIView.animate(withDuration: 0.3, animations: {
+                           self.flippedCards.first!.layer.opacity = 0
+                           self.flippedCards.last!.layer.opacity = 0
+                       }) { _ in
+                           self.flippedCards.first!.removeFromSuperview()
+                           self.flippedCards.last?.removeFromSuperview()
+                           self.flippedCards = []
+                           if self.boardGameView.subviews.isEmpty {
+                               let endGameAlert = UIAlertController(title: "Поздравляем!", message: "Вы завершили игру за \(String(self.game.stepsCount)) хода", preferredStyle: .alert)
+                               endGameAlert.addAction(UIAlertAction(title: "Закончить игру", style: .default, handler: nil))
+                               endGameAlert.addAction(UIAlertAction(title: "Начать заново", style: .default, handler: { _ in
+                                   game = getNewGame()
+                                   let cards = getCardBy(modelData: game.cards)
+                                   placeCardsOnBoard(cards)
+                               }))
+                               present(endGameAlert, animated: true, completion: nil)
+                           }
+                       }
+                   } else {
+                       // в ином случае
+                       for card in self.flippedCards {
+                           (card as! FlippableView).flip()
+                       }
+                   }
+                   
+               }
+               
+               
+           }
+       }
+       
+       return cardViews
+   }
+   
+    
 }
 
 

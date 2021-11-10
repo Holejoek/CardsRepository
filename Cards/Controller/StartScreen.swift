@@ -62,25 +62,28 @@ class StartScreen: UIViewController {
     }
     @objc func continueGame(_ sender: UIButton) {
         let storage = ProgressStorage()
-//        guard storage.isExistProgress() else {
-//            let alert = UIAlertController(title: "Нету незаконченных игр", message: nil, preferredStyle: .alert)
-//            alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
-//            self.present(alert, animated: true, completion: nil)
-//            return
-//        }
+        guard !storage.isExistProgress() else {
+            let alert = UIAlertController(title: "Нету незаконченных игр", message: nil, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
         let boardGameVc = storyboardInstance.instantiateViewController(withIdentifier: "BoardGameController") as! BoardGameController
         
         guard let loadedProgress = storage.load() else { return }
-        var loadedCards: [Card] = []
-        var loadedCGPointOfCards: [CGPoint] = []
-        for oneCard in loadedProgress {
-            loadedCards.append((oneCard.cardShape, oneCard.cardColor))
-            loadedCGPointOfCards.append(CGPoint(x: oneCard.xCoordinate, y: oneCard.yCoordinate))
-        }
-        boardGameVc.game = boardGameVc.getNewGame()
-        let cards = boardGameVc.getCardBy(modelData: loadedCards)
-        boardGameVc.placeCardsOnBoardWithCGPoint(cards: cards, with: loadedCGPointOfCards)
-        boardGameVc.currentScoreLabel.text = String(boardGameVc.game.stepsCount)
+       
+        boardGameVc.cardProgress = loadedProgress
+        boardGameVc.isContinuation = true
+//        var loadedCards: [Card] = []
+//        var loadedCGPointOfCards: [CGPoint] = []
+//        for oneCard in loadedProgress {
+//            loadedCards.append((oneCard.cardShape, oneCard.cardColor))
+//            loadedCGPointOfCards.append(CGPoint(x: oneCard.xCoordinate, y: oneCard.yCoordinate))
+//        }
+//       boardGameVc.game = Game()
+//       let cards = boardGameVc.getCardByForStartScreen(modelData: loadedCards)
+//     boardGameVc.placeCardsOnBoardWithCGPoint(cards: cards, with: loadedCGPointOfCards)
+//        boardGameVc.currentScoreLabel.text = String(boardGameVc.game.stepsCount)
         navigationController?.pushViewController(boardGameVc, animated: true )
     }
 }
