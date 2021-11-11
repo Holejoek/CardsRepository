@@ -21,6 +21,7 @@ class CardView<ShapeType: ShapeLayerProtocol>: UIView, FlippableView {
     // Не уверен что в View можно производить загрузку из UserDefaults, в рамках архитектуры MVC. Другого способа выгрузить массив доступных рубашек пока не нашел
     // соединил userDefaults с методом getBackSideView
     private let gameDefaults = UserDefaultsStorage()
+    
     var isFlipped: Bool = false {
         didSet {
             // теперь при каждом изменении данного свойства будет отмечаться экземпляр вью как требующий обновления (обновляется в следующем цикле обновления(60 или 120 Гц))
@@ -60,7 +61,7 @@ class CardView<ShapeType: ShapeLayerProtocol>: UIView, FlippableView {
         isFlipped = !isFlipped  // либо isFlipped.toggle()
     }
  
-    //MARK: Перемещение игральных карточек
+    //MARK: - Перемещение игральных карточек
     private var startTouchPoint: CGPoint!
     private var anchorPoint: CGPoint = CGPoint(x: 0, y: 0)
     private var isNeedToMoveAtStartPoint: Bool = false
@@ -100,12 +101,7 @@ class CardView<ShapeType: ShapeLayerProtocol>: UIView, FlippableView {
         }
         self.isUserInteractionEnabled = true
         self.isNeedToMoveAtStartPoint = false
-    }
-    // Предполагаю, что в этом методе надо будет реализовать сохранение прогресса при каждом взаимодействии.
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//    print(self.responderChain())
-//    }
-    
+    }  
     private func getFrontSideView() -> UIView {
         let view = UIView(frame: self.bounds)
         view.backgroundColor = .white
@@ -122,10 +118,11 @@ class CardView<ShapeType: ShapeLayerProtocol>: UIView, FlippableView {
     
     
     private func getBackSideView() -> UIView {
+        let loadedBacks = gameDefaults.load().backTypes
         let view = UIView(frame: self.bounds)
         view.backgroundColor = .white
         //MARK: РУБАШКИ. выбор случайного узора для рубашки
-        switch gameDefaults.load().backTypes.randomElement() ?? BackCardType.allCases.randomElement()! {
+        switch loadedBacks.randomElement() ?? BackCardType.allCases.randomElement()! {
         case .circle :
             let layer = BackSideCircle(size: self.bounds.size, fillColor: UIColor.black.cgColor)
             view.layer.addSublayer(layer)

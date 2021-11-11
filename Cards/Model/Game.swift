@@ -24,7 +24,7 @@ class Game {
     var availableBacks: [BackCardType]
     //
     var stepsCount: Int
-    
+   
     init(){
         gameDefaults = storage.load()
         cardsCount = gameDefaults.pairsCount

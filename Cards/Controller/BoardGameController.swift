@@ -44,7 +44,6 @@ class BoardGameController: UIViewController {
             for oneCard in progress {
                 loadedCards.append((oneCard.cardShape, oneCard.cardColor))
                 loadedCGPointOfCards.append(CGPoint(x: oneCard.xCoordinate, y: oneCard.yCoordinate))
-                
             }
             game = Game()
             game.stepsCount = steps
@@ -53,6 +52,27 @@ class BoardGameController: UIViewController {
             let cards = getCardBy(modelData: loadedCards)
             placeCardsOnBoardWithCGPoint(cards: cards, with: loadedCGPointOfCards)
         }
+    }
+    //MARK: viewDidDisappear сохранение прогресса
+    override func viewDidDisappear(_ animated: Bool) {
+        guard boardGameView.subviews.count > 0 else {
+            print("viewDidDisappear - прогресс пуст ")
+            return
+        }
+        let viewsOnBoard = boardGameView.subviews
+        let progressStorage = ProgressStorage()
+        var progressToSave = [CardProgress]()
+        for oneCard in viewsOnBoard {
+            let xCoordinateToSave = Int(oneCard.frame.origin.x)
+            let yCoordinateToSave = Int(oneCard.frame.origin.y)
+            let cardShapeToSave =  game.cards[oneCard.tag].type
+            let cardColorToSave = game.cards[oneCard.tag].color
+            let cardTagOfViewToSave = oneCard.tag
+            progressToSave.append((xCoordinateToSave, yCoordinateToSave, cardShapeToSave,cardColorToSave,cardTagOfViewToSave ))
+        }
+        progressStorage.save(progressToSave)
+        guard let currentStep = Int(currentScoreLabel.text!) else { return }
+        progressStorage.saveCurrentStep(currentStep)
     }
     
     //MARK: - Создание интерфейса сверху
@@ -182,7 +202,6 @@ class BoardGameController: UIViewController {
         return boardView
     }
     //MARK: генерация карточек
-    
     func getCardBy(modelData: [Card]) -> [UIView] {
         var cardViews = [UIView]()
         let cardViewFactory = CardViewFactory()
@@ -292,24 +311,6 @@ class BoardGameController: UIViewController {
             boardGameView.addSubview(cardForBoard)
         }
     }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        
-        let progressStorage = ProgressStorage()
-        var progressToSave = [CardProgress]()
-        for oneCard in boardGameView.subviews {
-            let xCoordinateToSave = Int(oneCard.frame.origin.x)
-            let yCoordinateToSave = Int(oneCard.frame.origin.y)
-            let cardShapeToSave =  game.cards[oneCard.tag].type
-            let cardColorToSave = game.cards[oneCard.tag].color
-            let cardTagOfViewToSave = oneCard.tag
-            progressToSave.append((xCoordinateToSave, yCoordinateToSave, cardShapeToSave,cardColorToSave,cardTagOfViewToSave ))
-        }
-        progressStorage.save(progressToSave)
-        guard let currentStep = Int(currentScoreLabel.text!) else { return }
-        progressStorage.saveCurrentStep(currentStep)
-    }
-    
     
     private var cardSize: CGSize {
         CGSize(width: 80, height: 120)

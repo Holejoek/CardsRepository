@@ -73,5 +73,4 @@ class EditColorController: UITableViewController {
     override func viewDidDisappear(_ animated: Bool) {
         doAfterColorSelected?(colors)
     }
-
 }
